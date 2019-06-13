@@ -1,0 +1,13 @@
+stages:
+  - deploy
+
+deploy:
+  stage: deploy
+  image: alpine:3.7
+  script:
+    - apk update && apk upgrade
+    - apk add git openssh bash
+    - mkdir ~/.ssh
+    - echo "$SSH_SECRET" | base64 -d > ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh && chmod 600 ~/.ssh/*
+    - ssh -o StrictHostKeyChecking=no -tt "$SSH_USER@$SSH_HOST" "cd /var/www/adsiconic.com/html/landing-page; pwd; whoami; git pull"
